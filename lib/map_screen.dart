@@ -53,11 +53,6 @@ class _MapScreenState extends State<MapScreen> {
                       return Modal(
                         id: record['id'],
                         artiste: record['artiste'],
-                        // organisme: record['organisme'],
-                        adresse: record['adresse'],
-                        annee: record['annee'],
-                        arrondissement: record['arrondissement'],
-                        programmeEntente: record['programme_entente'],
                         latitude: record['latitude'],
                         longitude: record['longitude'],
                         image: record['image'],
