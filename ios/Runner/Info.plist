@@ -51,5 +51,9 @@
 	<string>This app needs access to your location in order to show you nearby murals</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to your camera in order to take a picture of the murals you want to capture</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+	</array>
 </dict>
 </plist>

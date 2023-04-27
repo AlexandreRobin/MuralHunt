@@ -73,6 +73,40 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            Ink(
+              decoration: const ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: CircleBorder(),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.filter_drama),
+                onPressed: () {},
+                color: Colors
+                    .red, // <- Add this line to set the icon color directly
+                splashColor:
+                    Colors.green, // <- Add this line to set the splash color
+                highlightColor:
+                    Colors.green, // <- Add this line to set the highlight color
+                iconSize: 50, // <- Add this line to set the size of the icon
+                padding: const EdgeInsets.all(
+                    10), // <- Add this line to set the padding of the icon
+                splashRadius:
+                    30, // <- Add this line to set the splash radius of the icon
+                disabledColor: Colors
+                    .grey, // <- Add this line to set the disabled color of the icon
+                tooltip: "Filter Drama",
+                // Move the style property to the Ink widget:
+                // splashFactory: InkRipple.splashFactory,
+                // highlightElevation: 8,
+                hoverColor: Colors.green,
+                focusColor: Colors.green,
+                // overlayColor: MaterialStateProperty.all<Color>(Colors.pink),
+                visualDensity: VisualDensity.compact,
+                enableFeedback: true,
+                alignment: Alignment.center,
+                // child: const Icon(Icons.filter_drama),
+              ),
+            ),
           ],
         ),
       ),

@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'modal.dart';
+import 'bottom_modal.dart';
+import 'toggle_filter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -35,30 +37,36 @@ class _MapScreenState extends State<MapScreen> {
     _controller
         .setMapStyle(await rootBundle.loadString('assets/map_style.json'));
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     fetchData().then((data) {
       setState(() {
         _markers = data.map((record) {
           return Marker(
-              markerId: MarkerId(record['id']),
-              position: LatLng(double.parse(record['latitude']),
-                  double.parse(record['longitude'])),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueRed),
-              onTap: () {
-                showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    barrierColor: Colors.transparent,
-                    builder: (builder) {
-                      return Modal(
-                        id: record['id'],
-                        artiste: record['artiste'],
-                        latitude: record['latitude'],
-                        longitude: record['longitude'],
-                        image: record['image'],
-                      );
-                    });
-              });
+            markerId: MarkerId(record['id']),
+            position: LatLng(double.parse(record['latitude']),
+                double.parse(record['longitude'])),
+            icon: prefs.getString(record['id']) == null
+                ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
+                : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue),
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                barrierColor: Colors.transparent,
+                builder: (builder) {
+                  return BottomModal(
+                    id: record['id'],
+                    artiste: record['artiste'],
+                    latitude: record['latitude'],
+                    longitude: record['longitude'],
+                    image: record['image'],
+                  );
+                },
+              );
+            },
+          );
         }).toSet();
       });
     });
@@ -81,7 +89,7 @@ class _MapScreenState extends State<MapScreen> {
           GoogleMap(
             initialCameraPosition: const CameraPosition(
               target: LatLng(45.50, -73.56),
-              zoom: 10.0,
+              zoom: 10,
             ),
             onMapCreated: _onMapCreated,
             compassEnabled: false,
@@ -97,6 +105,7 @@ class _MapScreenState extends State<MapScreen> {
             // buildingsEnabled: false,
             markers: _markers,
           ),
+          const ToggleFilter(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
