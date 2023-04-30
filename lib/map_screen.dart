@@ -1,84 +1,72 @@
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:location/location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'bottom_modal.dart';
-import 'toggle_filter.dart';
+import 'package:muralhunt/bottom_card.dart';
+import 'package:muralhunt/utils/mural.dart';
+import 'package:muralhunt/utils/location.dart';
+import 'package:muralhunt/toggle_filter.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({
+    super.key,
+    required this.murals,
+  });
+
+  final Iterable<Mural> murals;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController _controller;
-  late LocationData _locationData;
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
   Set<Marker> _markers = {};
 
-  Future<List<dynamic>> fetchData() async {
-    final response = await http.get(Uri.parse(
-        'https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=f02401c2-8336-4086-9955-4c5592ace72e&limit=500'));
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body)['result']['records'];
-    } else {
-      throw Exception('Failed to fetch data');
-    }
+  Future<void> _onMapCreated(GoogleMapController controller) async {
+    _controller.complete(controller);
+    _centerCamera();
+    _applyStyle();
   }
 
-  void _onMapCreated(GoogleMapController controller) async {
-    _controller = controller;
+  Future<void> _centerCamera() async {
+    final GoogleMapController controller = await _controller.future;
+    final Position position = await Location.determinePosition();
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: LatLng(position.latitude, position.longitude),
+        zoom: 15,
+      ),
+    ));
+  }
 
-    _controller
+  Future<void> _applyStyle() async {
+    final GoogleMapController controller = await _controller.future;
+    controller
         .setMapStyle(await rootBundle.loadString('assets/map_style.json'));
+  }
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  _onFilter(Set<Marker> markers) async {
+    await _controller.future;
+    setState(() {
+      _markers = markers;
+    });
+  }
 
-    fetchData().then((data) {
-      setState(() {
-        _markers = data.map((record) {
-          return Marker(
-            markerId: MarkerId(record['id']),
-            position: LatLng(double.parse(record['latitude']),
-                double.parse(record['longitude'])),
-            icon: prefs.getString(record['id']) == null
-                ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueBlue),
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                barrierColor: Colors.transparent,
-                builder: (builder) {
-                  return BottomModal(
-                    id: record['id'],
-                    artiste: record['artiste'],
-                    latitude: record['latitude'],
-                    longitude: record['longitude'],
-                    image: record['image'],
-                  );
-                },
-              );
-            },
-          );
-        }).toSet();
-      });
-    });
-    await Location().getLocation().then((locationData) {
-      setState(() {
-        _locationData = locationData;
-      });
-      _controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(locationData.latitude!, locationData.longitude!),
-        zoom: 15.0,
-      )));
-    });
+  _onTapMarker(Mural mural) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      // isScrollControlled: true,
+      builder: (builder) {
+        return BottomCard(
+          mural: mural,
+        );
+      },
+    );
   }
 
   @override
@@ -102,22 +90,18 @@ class _MapScreenState extends State<MapScreen> {
             tiltGesturesEnabled: false,
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            // buildingsEnabled: false,
             markers: _markers,
           ),
-          const ToggleFilter(),
+          ToggleFilter(
+            murals: widget.murals,
+            onFilter: _onFilter,
+            onTapMarker: _onTapMarker,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () async {
-          _controller.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(_locationData.latitude!, _locationData.longitude!),
-              zoom: await _controller.getZoomLevel(),
-            ),
-          ));
-        },
+        onPressed: _centerCamera,
         child: const Icon(
           Icons.my_location,
           color: Colors.black,

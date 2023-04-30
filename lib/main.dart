@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'map_screen.dart';
-import 'my_home_page.dart';
+import 'package:muralhunt/splash_screen.dart';
 
 Future main() async {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,8 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const MyHomePage(title: 'Mural Hunt'),
-      home: MapScreen(),
+      home: const SplashScreen(),
     );
   }
 }

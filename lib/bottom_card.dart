@@ -1,70 +1,24 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:muralhunt/utils/mural.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-class BottomModal extends StatefulWidget {
-  const BottomModal({
+class BottomCard extends StatefulWidget {
+  const BottomCard({
     super.key,
-    required this.id,
-    required this.artiste,
-    required this.latitude,
-    required this.longitude,
-    required this.image,
+    required this.mural,
   });
 
-  final String id;
-  final String artiste;
-  final String latitude;
-  final String longitude;
-  final String image;
+  final Mural mural;
 
   @override
-  State<BottomModal> createState() => _BottomModalState();
+  State<BottomCard> createState() => _BottomCardState();
 }
 
-class _BottomModalState extends State<BottomModal> {
-  String _date = '';
-  late ImageProvider _photo = NetworkImage(widget.image);
+class _BottomCardState extends State<BottomCard> {
 
-  @override
-  void initState() {
-    super.initState();
-    _getCapture();
-  }
-
-  Future<void> _getCapture() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String path = (await getApplicationDocumentsDirectory()).path;
-    setState(() {
-      if (prefs.getString(widget.id) != null) {
-        _date = prefs.getString(widget.id) ?? '';
-        _photo = FileImage(File('$path/$_date.jpg'));
-      }
-    });
-  }
-
-  Future<void> _onCapture() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
-
-    if (photo != null) {
-      final String path = (await getApplicationDocumentsDirectory()).path;
-      final String fileName = DateTime.now().toIso8601String();
-      final File file = File('$path/$fileName.jpg');
-      await file.writeAsBytes(await photo.readAsBytes());
-
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(widget.id, fileName);
-
-      // TODO update markers
-
-      _getCapture();
-    }
+  _onCapture() async {
+    widget.mural.setCapture();
   }
 
   Future<void> _onDirection() async {
@@ -74,7 +28,7 @@ class _BottomModalState extends State<BottomModal> {
       path: '/maps/search/',
       queryParameters: {
         'api': '1',
-        'query': '${widget.latitude},${widget.longitude}',
+        'query': '${widget.mural.latitude},${widget.mural.longitude}',
       },
     );
 
@@ -83,7 +37,7 @@ class _BottomModalState extends State<BottomModal> {
       host: 'maps.apple.com',
       path: '/',
       queryParameters: {
-        'q': '${widget.latitude},${widget.longitude}',
+        'q': '${widget.mural.latitude},${widget.mural.longitude}',
       },
     );
 
@@ -106,7 +60,7 @@ class _BottomModalState extends State<BottomModal> {
             ActionButton(
               onTap: _onCapture,
               icon: Icons.camera_alt,
-              text: _date == '' ? 'Capture' : 'Recapture',
+              text: widget.mural.isCaptured ? 'Recapture' : 'Capture',
             ),
             ActionButton(
               onTap: _onDirection,
@@ -116,9 +70,7 @@ class _BottomModalState extends State<BottomModal> {
           ],
         ),
         MuralCard(
-          image: _photo,
-          artiste: widget.artiste,
-          date: _date,
+          mural: widget.mural,
         ),
       ]),
     );
@@ -159,8 +111,7 @@ class ActionButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             onTap: onTap,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -185,14 +136,10 @@ class ActionButton extends StatelessWidget {
 class MuralCard extends StatelessWidget {
   const MuralCard({
     super.key,
-    required this.image,
-    required this.artiste,
-    required this.date,
+    required this.mural,
   });
 
-  final ImageProvider image;
-  final String artiste;
-  final String date;
+  final Mural mural;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +150,9 @@ class MuralCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: image,
+            image: mural.isCaptured
+                ? FileImage(mural.capturedPhoto)
+                : NetworkImage(mural.image) as ImageProvider,
             fit: BoxFit.cover,
           ),
           boxShadow: [
@@ -231,7 +180,7 @@ class MuralCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 8, bottom: 8),
                 child: Text(
-                  artiste,
+                  mural.artiste,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -242,9 +191,9 @@ class MuralCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(
-                  date == ''
-                      ? 'Not captured'
-                      : 'Captured on ${DateFormat.yMMMMd().format(DateTime.parse(date))}',
+                  mural.isCaptured
+                      ? 'Captured on ${DateFormat.yMMMMd().format(mural.capturedDate)}'
+                      : 'Not captured',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
