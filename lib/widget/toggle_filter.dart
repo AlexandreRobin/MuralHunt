@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:muralhunt/widget/bottom_card.dart';
 import 'package:muralhunt/utils/mural.dart';
 
 class ToggleFilter extends StatefulWidget {
@@ -7,68 +8,58 @@ class ToggleFilter extends StatefulWidget {
     super.key,
     required this.murals,
     required this.onFilter,
-    required this.onTapMarker,
   });
 
   final Iterable<Mural> murals;
   final Function(Set<Marker>) onFilter;
-  final Function(Mural) onTapMarker;
 
   @override
   State<ToggleFilter> createState() => _ToggleFilterState();
 }
 
 class _ToggleFilterState extends State<ToggleFilter> {
-  final List<bool> _isSelected = [true, false, false];
+  late int _filterType;
 
   @override
   void initState() {
     super.initState();
-    _onFilterAll();
+    _onFilter(0);
   }
 
-  _onFilterAll() {
+  void _onFilter(int filterType) {
     setState(() {
-      _isSelected[0] = true;
-      _isSelected[1] = false;
-      _isSelected[2] = false;
+      _filterType = filterType;
     });
 
-    final Set<Marker> markers = widget.murals.map((Mural mural) {
-      return mural.createMarker(widget.onTapMarker);
+    final Set<Marker> markers = widget.murals
+        .where((mural) => filterType == 1
+            ? mural.isCaptured
+            : filterType == 2
+                ? !mural.isCaptured
+                : true)
+        .map((mural) {
+      return mural.createMarker(_onTapMarker);
     }).toSet();
 
     widget.onFilter(markers);
   }
 
-  _onFilterCaptured() {
-    setState(() {
-      _isSelected[0] = false;
-      _isSelected[1] = true;
-      _isSelected[2] = false;
-    });
-
-    final Set<Marker> markers =
-        widget.murals.where((mural) => mural.isCaptured).map((mural) {
-      return mural.createMarker(widget.onTapMarker);
-    }).toSet();
-
-    widget.onFilter(markers);
-  }
-
-  _onFilterNotCaptured() {
-    setState(() {
-      _isSelected[0] = false;
-      _isSelected[1] = false;
-      _isSelected[2] = true;
-    });
-
-    final Set<Marker> markers =
-        widget.murals.where((mural) => !mural.isCaptured).map((mural) {
-      return mural.createMarker(widget.onTapMarker);
-    }).toSet();
-
-    widget.onFilter(markers);
+  void _onTapMarker(Mural mural) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      builder: (builder) {
+        return BottomCard(
+          mural: mural,
+          updateMap: () {
+            setState(() {
+              _onFilter(_filterType);
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -94,18 +85,24 @@ class _ToggleFilterState extends State<ToggleFilter> {
         child: Column(
           children: [
             Toggle(
-              onTap: _onFilterAll,
-              isSelected: _isSelected[0],
+              onTap: () {
+                _onFilter(0);
+              },
+              isSelected: _filterType == 0,
               icon: Icons.directions,
             ),
             Toggle(
-              onTap: _onFilterCaptured,
-              isSelected: _isSelected[1],
+              onTap: () {
+                _onFilter(1);
+              },
+              isSelected: _filterType == 1,
               icon: Icons.access_alarm,
             ),
             Toggle(
-              onTap: _onFilterNotCaptured,
-              isSelected: _isSelected[2],
+              onTap: () {
+                _onFilter(2);
+              },
+              isSelected: _filterType == 2,
               icon: Icons.recycling,
             ),
           ],

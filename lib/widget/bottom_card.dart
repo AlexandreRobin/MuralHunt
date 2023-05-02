@@ -3,25 +3,36 @@ import 'package:muralhunt/utils/mural.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
+import '../screen/captured_screen.dart';
+
 class BottomCard extends StatefulWidget {
   const BottomCard({
     super.key,
     required this.mural,
+    required this.updateMap,
   });
 
   final Mural mural;
+  final Function updateMap;
 
   @override
   State<BottomCard> createState() => _BottomCardState();
 }
 
 class _BottomCardState extends State<BottomCard> {
-
-  _onCapture() async {
-    widget.mural.setCapture();
+  void _onCapture() {
+    widget.mural.setCapture().then((Mural mural) {
+      Navigator.pop(context);
+      widget.updateMap();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CapturedScreen(mural: widget.mural)),
+      );
+    });
   }
 
-  Future<void> _onDirection() async {
+  void _onDirection() async {
     final googleMapsUri = Uri(
       scheme: 'https',
       host: 'www.google.com',

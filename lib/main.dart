@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:muralhunt/splash_screen.dart';
+import 'package:muralhunt/screen/splash_screen.dart';
 
 Future main() async {
   runApp(const MyApp());

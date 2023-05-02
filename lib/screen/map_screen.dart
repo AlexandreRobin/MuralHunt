@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:muralhunt/bottom_card.dart';
 import 'package:muralhunt/utils/mural.dart';
 import 'package:muralhunt/utils/location.dart';
-import 'package:muralhunt/toggle_filter.dart';
+import 'package:muralhunt/widget/toggle_filter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({
@@ -25,13 +24,13 @@ class _MapScreenState extends State<MapScreen> {
       Completer<GoogleMapController>();
   Set<Marker> _markers = {};
 
-  Future<void> _onMapCreated(GoogleMapController controller) async {
+  void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
     _centerCamera();
     _applyStyle();
   }
 
-  Future<void> _centerCamera() async {
+  void _centerCamera() async {
     final GoogleMapController controller = await _controller.future;
     final Position position = await Location.determinePosition();
     controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -42,31 +41,17 @@ class _MapScreenState extends State<MapScreen> {
     ));
   }
 
-  Future<void> _applyStyle() async {
+  void _applyStyle() async {
     final GoogleMapController controller = await _controller.future;
     controller
         .setMapStyle(await rootBundle.loadString('assets/map_style.json'));
   }
 
-  _onFilter(Set<Marker> markers) async {
+  void _onFilter(Set<Marker> markers) async {
     await _controller.future;
     setState(() {
       _markers = markers;
     });
-  }
-
-  _onTapMarker(Mural mural) async {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-      // isScrollControlled: true,
-      builder: (builder) {
-        return BottomCard(
-          mural: mural,
-        );
-      },
-    );
   }
 
   @override
@@ -95,7 +80,6 @@ class _MapScreenState extends State<MapScreen> {
           ToggleFilter(
             murals: widget.murals,
             onFilter: _onFilter,
-            onTapMarker: _onTapMarker,
           ),
         ],
       ),

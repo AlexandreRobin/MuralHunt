@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:muralhunt/map_screen.dart';
+import 'package:muralhunt/screen/map_screen.dart';
 import 'package:muralhunt/utils/mural.dart';
 import 'package:muralhunt/utils/location.dart';
 import 'package:muralhunt/utils/api.dart';
@@ -15,12 +15,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Location.determinePosition();
-    API.getMurals().then((Iterable<Mural> murals) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MapScreen(murals: murals)),
-      );
+    Location.determinePosition().then((value) {
+      API.getMurals().then((Iterable<Mural> murals) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MapScreen(murals: murals)),
+        );
+      });
     });
   }
 
