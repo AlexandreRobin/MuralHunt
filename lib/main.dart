@@ -13,7 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MuralHunt',
       theme: ThemeData(
+        primaryColor: Color(0xEE010000),
         primarySwatch: Colors.blue,
+        fontFamily: 'Dancing Script '
       ),
       home: const SplashScreen(),
     );
