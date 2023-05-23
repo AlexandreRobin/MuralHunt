@@ -1,71 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:muralhunt/widget/bottom_card.dart';
-import 'package:muralhunt/utils/mural.dart';
+import 'package:muralhunt/providers/filter_provider.dart';
+import 'package:provider/provider.dart';
 
-class ToggleFilter extends StatefulWidget {
-  const ToggleFilter({
+class FilterWidget extends StatelessWidget {
+  const FilterWidget({
     super.key,
-    required this.murals,
-    required this.onFilter,
   });
-
-  final Iterable<Mural> murals;
-  final Function(Set<Marker>) onFilter;
-
-  @override
-  State<ToggleFilter> createState() => _ToggleFilterState();
-}
-
-class _ToggleFilterState extends State<ToggleFilter> {
-  late int _filterType;
-
-  @override
-  void initState() {
-    super.initState();
-    _onFilter(0);
-  }
-
-  void _onFilter(int filterType) {
-    setState(() {
-      _filterType = filterType;
-    });
-
-    final Set<Marker> markers = widget.murals
-        .where((mural) => filterType == 1
-            ? mural.isCaptured
-            : filterType == 2
-                ? !mural.isCaptured
-                : true)
-        .map((mural) {
-      return mural.createMarker(_onTapMarker);
-    }).toSet();
-
-    widget.onFilter(markers);
-  }
-
-  void _onTapMarker(Mural mural) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-      builder: (builder) {
-        return BottomCard(
-          mural: mural,
-          updateMap: () {
-            setState(() {
-              _onFilter(_filterType);
-            });
-          },
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 100,
+      top: 200,
       right: 0,
       child: Container(
         decoration: BoxDecoration(
@@ -85,24 +30,18 @@ class _ToggleFilterState extends State<ToggleFilter> {
         child: Column(
           children: [
             Toggle(
-              onTap: () {
-                _onFilter(0);
-              },
-              isSelected: _filterType == 0,
+              onTap: () => context.read<FilterProvider>().filterAll(),
+              isSelected: context.watch<FilterProvider>().captured && context.watch<FilterProvider>().notCaptured,
               icon: Icons.directions,
             ),
             Toggle(
-              onTap: () {
-                _onFilter(1);
-              },
-              isSelected: _filterType == 1,
+              onTap: () => context.read<FilterProvider>().filterCaptured(),
+              isSelected: context.watch<FilterProvider>().captured && !context.watch<FilterProvider>().notCaptured,
               icon: Icons.access_alarm,
             ),
             Toggle(
-              onTap: () {
-                _onFilter(2);
-              },
-              isSelected: _filterType == 2,
+              onTap: () => context.read<FilterProvider>().filterNotCaptured(),
+              isSelected: !context.watch<FilterProvider>().captured && context.watch<FilterProvider>().notCaptured,
               icon: Icons.recycling,
             ),
           ],

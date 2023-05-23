@@ -52,4 +52,12 @@ class Location {
     return bearing <= 20.0;
   }
 
+  // static Future<bool> isCapturable(Mural mural) {
+  //   return determinePosition().then((Position position) {
+  //     double bearing = Geolocator.bearingBetween(position.latitude,
+  //         position.longitude, mural.latitude, mural.longitude);
+
+  //     return bearing <= 20.0;
+  //   });
+  // }
 }
