@@ -8,6 +8,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'dart:ui' as ui; // imported as ui to prevent conflict between ui.Image and the Image widget
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 class Mural {
   String id;
   String artiste;
@@ -72,9 +76,7 @@ class Mural {
     return Marker(
       markerId: MarkerId(id),
       position: LatLng(latitude, longitude),
-      icon: isCaptured
-          ? capturedIcon
-          : uncapturedIcon,
+      icon: isCaptured ? capturedIcon : uncapturedIcon,
       onTap: () {
         showModalBottomSheet(
           context: context,
@@ -118,4 +120,5 @@ class Mural {
       throw 'Could not launch map';
     }
   }
+
 }

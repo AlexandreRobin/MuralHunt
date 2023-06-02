@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:muralhunt/providers/filter_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -31,18 +32,21 @@ class FilterWidget extends StatelessWidget {
           children: [
             Toggle(
               onTap: () => context.read<FilterProvider>().filterAll(),
-              isSelected: context.watch<FilterProvider>().captured && context.watch<FilterProvider>().notCaptured,
-              icon: Icons.directions,
+              isSelected: context.watch<FilterProvider>().captured &&
+                  context.watch<FilterProvider>().notCaptured,
+              icon: 'marker',
             ),
             Toggle(
               onTap: () => context.read<FilterProvider>().filterCaptured(),
-              isSelected: context.watch<FilterProvider>().captured && !context.watch<FilterProvider>().notCaptured,
-              icon: Icons.access_alarm,
+              isSelected: context.watch<FilterProvider>().captured &&
+                  !context.watch<FilterProvider>().notCaptured,
+              icon: 'captured_marker',
             ),
             Toggle(
               onTap: () => context.read<FilterProvider>().filterNotCaptured(),
-              isSelected: !context.watch<FilterProvider>().captured && context.watch<FilterProvider>().notCaptured,
-              icon: Icons.recycling,
+              isSelected: !context.watch<FilterProvider>().captured &&
+                  context.watch<FilterProvider>().notCaptured,
+              icon: 'uncaptured_marker',
             ),
           ],
         ),
@@ -61,7 +65,7 @@ class Toggle extends StatelessWidget {
 
   final Function() onTap;
   final bool isSelected;
-  final IconData icon;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +81,10 @@ class Toggle extends StatelessWidget {
                 isSelected ? Colors.grey.withOpacity(0.5) : Colors.transparent,
           ),
           padding: const EdgeInsets.all(8),
-          child: Icon(
-            icon,
-            size: isSelected ? 24 : 22,
-            color: isSelected ? Colors.black : Colors.black.withOpacity(0.7),
+          child: SvgPicture.asset(
+            'lib/assets/${icon}_${isSelected ? 'red' : 'grey'}.svg',
+            width: isSelected ? 24 : 22,
+            height: isSelected ? 24 : 22,
           ),
         ),
       ),

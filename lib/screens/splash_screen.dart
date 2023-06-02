@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:muralhunt/providers/marker_provider.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/screens/map_screen.dart';
 import 'package:muralhunt/utils/mural.dart';
@@ -19,30 +20,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     Location.determinePosition().then((value) {
       API.getMurals().then((Iterable<Mural> murals) {
         context.read<MuralProvider>().setAll(murals);
-        BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(
-            size: Size(10, 10),
-          ),
-          'lib/assets/Union.png',
-        ).then((capturedIcon) {
-          BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(
-              size: Size(10, 10),
-            ),
-            'lib/assets/Union.png',
-          ).then((uncapturedIcon) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MapScreen(
-                      capturedIcon: capturedIcon,
-                      uncapturedIcon: uncapturedIcon)),
-            );
-          });
-        });
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const MapScreen()));
+      });
+    });
+
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(size: Size(0, 0)),
+            'lib/assets/captured_filled_marker_red.png')
+        .then((capturedIcon) {
+      BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(size: Size(0, 0)),
+              'lib/assets/uncaptured_marker_filled_grey.png')
+          .then((uncapturedIcon) {
+        context.read<MarkerProvider>().setMarkers(capturedIcon, uncapturedIcon);
       });
     });
   }

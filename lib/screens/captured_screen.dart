@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/utils/mural.dart';
 import 'package:provider/provider.dart';
@@ -25,12 +26,18 @@ class CapturedScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                IconButton(
-                  iconSize: 32,
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
+                InkWell(
+                  onTap: () {
                     Navigator.of(context).pop();
                   },
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SvgPicture.asset(
+                      'lib/assets/close_red.svg',
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -56,7 +63,7 @@ class CapturedScreen extends StatelessWidget {
                     Positioned.fill(
                       child: Icon(
                         Icons.check,
-                        color: Colors.grey.withOpacity(0.6),
+                        color: Colors.white.withOpacity(0.6),
                         size: 200,
                       ),
                     ),
@@ -71,31 +78,49 @@ class CapturedScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  '${numberCaptured.toString().padLeft(3, '0')}/$numberTotal',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      numberCaptured.toString().padLeft(3, '0'),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFFEE0100),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '/$numberTotal',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFFA1A2A1),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(8),
-                  elevation: 0,
-                  textStyle: const TextStyle(
-                    fontSize: 18,
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Color(0xFFEE0100)),
+                    ),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      Color(0xFFEE0100).withOpacity(0.1),
+                    ),
                   ),
-                ),
-                child: const Text('Continue'),
-              ),
-            ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Color(0xFFEE0100)),
+                  ),
+                )),
           ],
         ),
       ),

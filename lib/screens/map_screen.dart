@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:muralhunt/providers/filter_provider.dart';
+import 'package:muralhunt/providers/marker_provider.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/utils/mural.dart';
 import 'package:muralhunt/utils/location.dart';
@@ -14,12 +16,7 @@ import 'package:provider/provider.dart';
 class MapScreen extends StatefulWidget {
   const MapScreen({
     super.key,
-    required this.capturedIcon,
-    required this.uncapturedIcon,
   });
-
-  final BitmapDescriptor capturedIcon;
-  final BitmapDescriptor uncapturedIcon;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -28,19 +25,6 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-  // late BitmapDescriptor _capturedIcon;
-  // late BitmapDescriptor _uncapturedIcon;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   BitmapDescriptor.fromAssetImage(
-  //           const ImageConfiguration(size: Size(100, 100)), 'lib/assets/Union.png')
-  //       .then((value) => _capturedIcon = value);
-  //   BitmapDescriptor.fromAssetImage(
-  //           const ImageConfiguration(size: Size(100, 100)), 'lib/assets/Union.png')
-  //       .then((value) => _uncapturedIcon = value);
-  // }
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
@@ -66,23 +50,19 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Set<Marker> _setMarkers() {
-
     Iterable<Mural> murals = context.watch<MuralProvider>().murals;
     bool captured = context.watch<FilterProvider>().captured;
     bool notCaptured = context.watch<FilterProvider>().notCaptured;
-
-    // BitmapDescriptor capturedIcon = await BitmapDescriptor.fromAssetImage(
-    //     const ImageConfiguration(), 'lib/assets/Union.png');
-    // BitmapDescriptor capturedIcon = BitmapDescriptor.fromAssetImage(
-    //     const ImageConfiguration(), 'lib/assets/Union.png') as BitmapDescriptor;
-    // BitmapDescriptor uncapturedIcon = BitmapDescriptor.fromAssetImage(
-    //     const ImageConfiguration(), 'lib/assets/Union.png') as BitmapDescriptor;
+    BitmapDescriptor capturedIcon =
+        context.watch<MarkerProvider>().capturedIcon;
+    BitmapDescriptor uncapturedIcon =
+        context.watch<MarkerProvider>().uncapturedIcon;
 
     Set<Marker> markers = murals
         .where((mural) =>
             captured && mural.isCaptured || notCaptured && !mural.isCaptured)
         .map((mural) {
-      return mural.createMarker(context, widget.capturedIcon, widget.uncapturedIcon);
+      return mural.createMarker(context, capturedIcon, uncapturedIcon);
     }).toSet();
 
     return markers;
@@ -118,13 +98,11 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: _centerCamera,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-              10), // adjust the radius value for the rounded corners
-        ),
-        child: const Icon(
-          Icons.my_location,
-          color: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: SvgPicture.asset(
+          'lib/assets/location_red.svg',
+          width: 25,
+          height: 25,
         ),
       ),
     );

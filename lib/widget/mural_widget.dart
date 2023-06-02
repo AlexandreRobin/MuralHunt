@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/screens/captured_screen.dart';
 import 'package:muralhunt/utils/mural.dart';
@@ -68,6 +69,10 @@ class ActionButton extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
           decoration: BoxDecoration(
+            border: Border.all(
+              color: Color(0xFFEE0100), // Set the color of the outline
+              width: 1.0, // Set the width of the outline
+            ),
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
@@ -81,6 +86,9 @@ class ActionButton extends StatelessWidget {
           child: Material(
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
+              overlayColor: MaterialStateProperty.all<Color>(
+                Color(0xFFEE0100).withOpacity(0.1),
+              ),
               borderRadius: BorderRadius.circular(30),
               onTap: isCapturable
                   ? () => onCapture(mural)
@@ -93,16 +101,24 @@ class ActionButton extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Icon(
-                          isCapturable ? Icons.camera_alt : Icons.directions),
+                      child: SvgPicture.asset(
+                        isCapturable ? 'lib/assets/camera_red.svg' : 'lib/assets/direction_red.svg',
+                      width: 18,
+                      height: 18,
+                    ),
+                    // Icon(
+                    //       isCapturable ? Icons.camera_alt : Icons.directions),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Text(isCapturable
-                          ? mural.isCaptured
-                              ? 'Recapture'
-                              : 'Capture'
-                          : 'Directions'),
+                      child: Text(
+                        isCapturable
+                            ? mural.isCaptured
+                                ? 'Recapture'
+                                : 'Capture'
+                            : 'Directions',
+                        style: TextStyle(color: Color(0xFFEE0100)),
+                      ),
                     ),
                   ],
                 ),

@@ -20,7 +20,11 @@ class ScoreWidget extends StatelessWidget {
             Container(
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Color(0xFFEE0100), // Set the color of the outline
+                  width: 1.0, // Set the width of the outline
+                ),
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -31,18 +35,35 @@ class ScoreWidget extends StatelessWidget {
                 ],
               ),
               child: Material(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(30),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
+                  overlayColor: MaterialStateProperty.all<Color>(
+                    Color(0xFFEE0100).withOpacity(0.1),
+                  ),
+                  borderRadius: BorderRadius.circular(30),
                   onTap: () => print('la;sjdf'),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 24),
-                    child: Text(
-                      '${numberCaptured.toString().padLeft(3, '0')}/$numberTotal',
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
+                    child: Row(
+                      children: [
+                        Text(
+                          numberCaptured.toString().padLeft(3, '0'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFEE0100),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '/$numberTotal',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFA1A2A1),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
