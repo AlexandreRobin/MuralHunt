@@ -12,45 +12,43 @@ class ScoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Positioned(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFFEE0100),
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color(0xFFEE0100),
+                width: 1.0,
               ),
-              child: OpenContainer(
-                openShape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
                 ),
-                closedShape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                transitionDuration: const Duration(milliseconds: 500),
-                openBuilder: (BuildContext context, void Function() action) {
-                  return const GalleryScreen();
-                },
-                closedBuilder: (BuildContext context, void Function() action) {
-                  return DetailsScore(action: action);
-                },
-              ),
+              ],
             ),
-          ],
-        ),
+            child: OpenContainer(
+              openShape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+              closedShape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+              transitionDuration: const Duration(milliseconds: 500),
+              openBuilder: (BuildContext context, void Function() action) {
+                return const GalleryScreen();
+              },
+              closedBuilder: (BuildContext context, void Function() action) {
+                return DetailsScore(action: action);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

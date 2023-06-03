@@ -84,9 +84,11 @@ class _MapScreenState extends State<MapScreen> {
             ),
             onMapCreated: _onMapCreated,
             compassEnabled: false,
-            cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                northeast: const LatLng(45.70, -73.47),
-                southwest: const LatLng(45.40, -73.95))),
+            cameraTargetBounds: CameraTargetBounds(
+              LatLngBounds(
+                  northeast: const LatLng(45.7, -73.5),
+                  southwest: const LatLng(45.4, -73.8)),
+            ),
             mapToolbarEnabled: false,
             minMaxZoomPreference: const MinMaxZoomPreference(11, null),
             zoomControlsEnabled: false,

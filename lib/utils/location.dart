@@ -33,7 +33,6 @@ class Location {
     double bearing = Geolocator.distanceBetween(
         position.latitude, position.longitude, mural.latitude, mural.longitude);
 
-     return bearing < 100;
+    return bearing < 100;
   }
-
 }

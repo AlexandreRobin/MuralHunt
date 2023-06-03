@@ -16,13 +16,6 @@ class API {
     } else {
       throw Exception('Failed to fetch data');
     }
-
-    // final client = RetryClient(http.Client());
-    // try {
-    //   print(await client.read(Uri.http('example.org', '')));
-    // } finally {
-    //   client.close();
-    // }
   }
 
   static Future<List<Mural>> getMurals() async {

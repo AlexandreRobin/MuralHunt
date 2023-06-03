@@ -94,5 +94,4 @@ class Mural {
   void redirectToMap() async {
     MapsLauncher.launchCoordinates(latitude, longitude);
   }
-
 }

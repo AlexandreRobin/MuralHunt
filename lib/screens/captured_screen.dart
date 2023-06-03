@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
@@ -44,11 +45,13 @@ class CapturedScreen extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.all(16),
+                Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Text(
-                    'Congrats!',
-                    style: TextStyle(
+                    Platform.localeName.substring(0, 2) == 'fr'
+                        ? 'Félicitations!'
+                        : 'Congrats!',
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -72,11 +75,13 @@ class CapturedScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(16),
+                Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Text(
-                    'Mural Captured',
-                    style: TextStyle(
+                    Platform.localeName.substring(0, 2) == 'fr'
+                        ? 'Mural Capturée'
+                        : 'Mural Captured',
+                    style: const TextStyle(
                       fontSize: 24,
                     ),
                   ),
@@ -118,9 +123,11 @@ class CapturedScreen extends StatelessWidget {
                     const Color(0xFFEE0100).withOpacity(0.1),
                   ),
                 ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(
+                child: Text(
+                  Platform.localeName.substring(0, 2) == 'fr'
+                      ? 'Continuer'
+                      : 'Continue',
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xFFEE0100),
                   ),

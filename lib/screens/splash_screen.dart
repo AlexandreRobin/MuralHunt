@@ -7,6 +7,7 @@ import 'package:muralhunt/utils/mural.dart';
 import 'package:muralhunt/utils/location.dart';
 import 'package:muralhunt/utils/api.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
@@ -21,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
+    initializeDateFormatting();
 
     Location.determinePosition().then((value) {
       API.getMurals().then((List<Mural> murals) {

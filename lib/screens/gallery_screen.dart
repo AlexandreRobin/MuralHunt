@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +100,8 @@ class GalleryItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
-                  DateFormat.yMMMMd().format(mural.capturedDate),
+                  DateFormat.yMMMMd(Platform.localeName)
+                      .format(mural.capturedDate),
                   style: const TextStyle(
                     color: Color(0xFFEE0100),
                     fontWeight: FontWeight.bold,

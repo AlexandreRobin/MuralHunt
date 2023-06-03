@@ -24,5 +24,4 @@ class FilterProvider with ChangeNotifier {
     _captured = true;
     notifyListeners();
   }
-
 }

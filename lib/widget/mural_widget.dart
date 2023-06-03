@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:muralhunt/providers/map_provider.dart';
@@ -121,9 +122,15 @@ class ActionButton extends StatelessWidget {
                       child: Text(
                         isCapturable
                             ? mural.isCaptured
-                                ? 'Recapture'
-                                : 'Capture'
-                            : 'Directions',
+                                ? Platform.localeName.substring(0, 2) == 'fr'
+                                    ? 'Recapturer'
+                                    : 'Recapture'
+                                : Platform.localeName.substring(0, 2) == 'fr'
+                                    ? 'Capturer'
+                                    : 'Capture'
+                            : Platform.localeName.substring(0, 2) == 'fr'
+                                ? 'Itinéraire'
+                                : 'Directions',
                         style: TextStyle(
                           fontSize: 16,
                           color: isCapturable
@@ -202,8 +209,12 @@ class DetailsCard extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(
                   mural.isCaptured
-                      ? 'Captured on ${DateFormat.yMMMMd().format(mural.capturedDate)}'
-                      : 'Not captured',
+                      ? Platform.localeName.substring(0, 2) == 'fr'
+                          ? 'Capturée le ${DateFormat.yMMMMd(Platform.localeName).format(mural.capturedDate)}'
+                          : 'Captured on ${DateFormat.yMMMMd().format(mural.capturedDate)}'
+                      : Platform.localeName.substring(0, 2) == 'fr'
+                          ? 'Non capturée'
+                          : 'Not captured',
                   style: const TextStyle(
                     color: Colors.white,
                   ),
