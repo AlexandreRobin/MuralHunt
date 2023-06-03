@@ -31,7 +31,7 @@ class CapturedScreen extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: SvgPicture.asset(
                       'lib/assets/close_red.svg',
                       width: 20,
@@ -61,10 +61,13 @@ class CapturedScreen extends StatelessWidget {
                       backgroundImage: FileImage(mural.capturedPhoto),
                     ),
                     Positioned.fill(
-                      child: Icon(
-                        Icons.check,
-                        color: Colors.white.withOpacity(0.6),
-                        size: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: SvgPicture.asset(
+                          'lib/assets/captured_white_transprent.svg',
+                          width: 20,
+                          height: 20,
+                        ),
                       ),
                     ),
                   ],
@@ -86,7 +89,6 @@ class CapturedScreen extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFFEE0100),
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
@@ -102,25 +104,29 @@ class CapturedScreen extends StatelessWidget {
               ],
             ),
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ButtonStyle(
-                    side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(color: Color(0xFFEE0100)),
-                    ),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                      Color(0xFFEE0100).withOpacity(0.1),
-                    ),
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all<BorderSide>(
+                    const BorderSide(color: Color(0xFFEE0100)),
                   ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Color(0xFFEE0100)),
+                  overlayColor: MaterialStateProperty.all<Color>(
+                    const Color(0xFFEE0100).withOpacity(0.1),
                   ),
-                )),
+                ),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFFEE0100),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

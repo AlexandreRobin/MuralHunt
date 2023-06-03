@@ -11,7 +11,6 @@ class API {
       'limit': '500'
     });
 
-    // Await the http get response, then decode the json-formatted response.
     var response = await http.get(url);
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['result']['records'];

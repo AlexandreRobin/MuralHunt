@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:muralhunt/providers/map_provider.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/screens/captured_screen.dart';
 import 'package:muralhunt/utils/mural.dart';
@@ -17,13 +18,15 @@ class MuralWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Mural mural = context.watch<MuralProvider>().getById(id);
+    context.read<MapProvider>().setCapturable(mural);
+
     return SizedBox(
       height: 300,
       child: Column(
         children: [
           ActionButton(
             mural: mural,
-            isCapturable: true,
+            isCapturable: context.watch<MapProvider>().isCapturable,
             context: context,
           ),
           DetailsCard(
@@ -69,10 +72,12 @@ class ActionButton extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Color(0xFFEE0100), // Set the color of the outline
-              width: 1.0, // Set the width of the outline
-            ),
+            border: isCapturable
+                ? Border.all(
+                    color: const Color(0xFFEE0100),
+                    width: 1.0,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
@@ -86,9 +91,11 @@ class ActionButton extends StatelessWidget {
           child: Material(
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
-              overlayColor: MaterialStateProperty.all<Color>(
-                Color(0xFFEE0100).withOpacity(0.1),
-              ),
+              overlayColor: isCapturable
+                  ? MaterialStateProperty.all<Color>(
+                      const Color(0xFFEE0100).withOpacity(0.1),
+                    )
+                  : null,
               borderRadius: BorderRadius.circular(30),
               onTap: isCapturable
                   ? () => onCapture(mural)
@@ -102,12 +109,12 @@ class ActionButton extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(4),
                       child: SvgPicture.asset(
-                        isCapturable ? 'lib/assets/camera_red.svg' : 'lib/assets/direction_red.svg',
-                      width: 18,
-                      height: 18,
-                    ),
-                    // Icon(
-                    //       isCapturable ? Icons.camera_alt : Icons.directions),
+                        isCapturable
+                            ? 'lib/assets/camera_red.svg'
+                            : 'lib/assets/direction_grey.svg',
+                        width: isCapturable ? 18 : 22,
+                        height: isCapturable ? 18 : 22,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4),
@@ -117,7 +124,12 @@ class ActionButton extends StatelessWidget {
                                 ? 'Recapture'
                                 : 'Capture'
                             : 'Directions',
-                        style: TextStyle(color: Color(0xFFEE0100)),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: isCapturable
+                              ? const Color(0xFFEE0100)
+                              : const Color(0xFFA1A2A1),
+                        ),
                       ),
                     ),
                   ],
@@ -194,7 +206,6 @@ class DetailsCard extends StatelessWidget {
                       : 'Not captured',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
                   ),
                 ),
               ),

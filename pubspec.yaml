@@ -40,6 +40,7 @@ dependencies:
   geolocator: ^9.0.2
   provider: ^6.0.5
   flutter_svg: ^2.0.5
+  animations: ^2.0.7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -69,6 +70,15 @@ flutter:
 
   assets:
     - lib/assets/
+
+  fonts:
+    - family: Signika
+      fonts:
+        - asset: lib/assets/Signika-VariableFont_wght.ttf
+    - family: Rubik
+      fonts:
+        - asset: lib/assets/Rubik-VariableFont_wght.ttf
+        # - asset: lib/assets/Raleway-Italic.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

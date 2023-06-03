@@ -1,16 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:muralhunt/widget/mural_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'dart:ui' as ui; // imported as ui to prevent conflict between ui.Image and the Image widget
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class Mural {
   String id;
@@ -72,20 +67,21 @@ class Mural {
     return this;
   }
 
-  Marker createMarker(context, capturedIcon, uncapturedIcon) {
+  Marker createMarker(context, BitmapDescriptor capturedIcon,
+      BitmapDescriptor uncapturedIcon, Function centerCamera) {
     return Marker(
       markerId: MarkerId(id),
       position: LatLng(latitude, longitude),
       icon: isCaptured ? capturedIcon : uncapturedIcon,
+      consumeTapEvents: true,
       onTap: () {
+        centerCamera(LatLng(latitude, longitude));
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
           barrierColor: Colors.transparent,
-          builder: (builder) {
-            return MuralWidget(
-              id: id,
-            );
+          builder: (BuildContext builder) {
+            return MuralWidget(id: id);
           },
         );
       },
@@ -120,5 +116,4 @@ class Mural {
       throw 'Could not launch map';
     }
   }
-
 }

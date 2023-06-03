@@ -24,4 +24,21 @@ class MuralProvider with ChangeNotifier {
     return _murals.where((element) => element.isCaptured).length;
   }
 
+  List<Mural> getGallery() {
+    Map<DateTime, List<Mural>> groupedMurals = {};
+
+    List<Mural> murals =
+        _murals.where((element) => element.isCaptured).toList();
+    murals.sort((a, b) => b.capturedDate.compareTo(a.capturedDate));
+
+    // for (var mural in murals) {
+    //   if (groupedMurals.containsKey(mural.capturedDate)) {
+    //     groupedMurals[mural.capturedDate]!.add(mural);
+    //   } else {
+    //     groupedMurals[mural.capturedDate] = [mural];
+    //   }
+    // }
+
+    return murals;
+  }
 }

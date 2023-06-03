@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:muralhunt/providers/filter_provider.dart';
-import 'package:muralhunt/providers/marker_provider.dart';
+import 'package:muralhunt/providers/map_provider.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
 import 'package:muralhunt/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +11,7 @@ Future main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => FilterProvider()),
         ChangeNotifierProvider(create: (_) => MuralProvider()),
-        ChangeNotifierProvider(create: (_) => MarkerProvider()),
+        ChangeNotifierProvider(create: (_) => MapProvider()),
       ],
       child: const MyApp(),
     ),
@@ -19,16 +19,17 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MuralHunt',
       theme: ThemeData(
-          primaryColor: const Color(0xEE010000),
-          primarySwatch: Colors.blue,
-          fontFamily: 'Dancing Script '),
+        fontFamily: 'Rubik',
+      ),
       home: const SplashScreen(),
     );
   }

@@ -1,5 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
+import 'package:muralhunt/screens/gallery_screen.dart';
 import 'package:provider/provider.dart';
 
 class ScoreWidget extends StatelessWidget {
@@ -10,7 +12,6 @@ class ScoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int numberCaptured = context.watch<MuralProvider>().numberCaptured();
-    int numberTotal = context.watch<MuralProvider>().murals.length;
 
     return SafeArea(
       child: Positioned(
@@ -21,8 +22,8 @@ class ScoreWidget extends StatelessWidget {
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Color(0xFFEE0100), // Set the color of the outline
-                  width: 1.0, // Set the width of the outline
+                  color: const Color(0xFFEE0100),
+                  width: 1.0,
                 ),
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
@@ -34,42 +35,72 @@ class ScoreWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Material(
-                borderRadius: BorderRadius.circular(30),
-                child: InkWell(
-                  overlayColor: MaterialStateProperty.all<Color>(
-                    Color(0xFFEE0100).withOpacity(0.1),
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                  onTap: () => print('la;sjdf'),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 24),
-                    child: Row(
-                      children: [
-                        Text(
-                          numberCaptured.toString().padLeft(3, '0'),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFFEE0100),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '/$numberTotal',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFFA1A2A1),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              child: OpenContainer(
+                openShape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
+                closedShape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                tappable: numberCaptured != 0,
+                transitionDuration: const Duration(milliseconds: 500),
+                openBuilder: (BuildContext context, void Function() action) {
+                  return const GalleryScreen();
+                },
+                closedBuilder: (BuildContext context, void Function() action) {
+                  return DetailsScore(action: action);
+                },
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class DetailsScore extends StatelessWidget {
+  const DetailsScore({
+    super.key,
+    required this.action,
+  });
+
+  final Function action;
+
+  @override
+  Widget build(BuildContext context) {
+    int numberCaptured = context.watch<MuralProvider>().numberCaptured();
+    int numberTotal = context.watch<MuralProvider>().murals.length;
+
+    return Material(
+      borderRadius: BorderRadius.circular(30),
+      child: InkWell(
+        overlayColor: MaterialStateProperty.all<Color>(
+          const Color(0xFFEE0100).withOpacity(0.1),
+        ),
+        onTap: () => action.call(),
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: Row(
+            children: [
+              Text(
+                numberCaptured.toString().padLeft(3, '0'),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFEE0100),
+                ),
+              ),
+              Text(
+                '/$numberTotal',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFA1A2A1),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
