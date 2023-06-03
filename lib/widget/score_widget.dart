@@ -11,8 +11,6 @@ class ScoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int numberCaptured = context.watch<MuralProvider>().numberCaptured();
-
     return SafeArea(
       child: Positioned(
         child: Row(
@@ -42,7 +40,6 @@ class ScoreWidget extends StatelessWidget {
                 closedShape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                tappable: numberCaptured != 0,
                 transitionDuration: const Duration(milliseconds: 500),
                 openBuilder: (BuildContext context, void Function() action) {
                   return const GalleryScreen();
@@ -78,7 +75,7 @@ class DetailsScore extends StatelessWidget {
         overlayColor: MaterialStateProperty.all<Color>(
           const Color(0xFFEE0100).withOpacity(0.1),
         ),
-        onTap: () => action.call(),
+        onTap: numberCaptured == 0 ? () {} : () => action.call(),
         borderRadius: BorderRadius.circular(30),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:muralhunt/utils/mural.dart';
 
 class MuralProvider with ChangeNotifier {
-  Iterable<Mural> _murals = [];
+  List<Mural> _murals = [];
 
-  Iterable<Mural> get murals => _murals;
+  List<Mural> get murals => _murals;
 
-  void setAll(Iterable<Mural> murals) {
+  void setAll(List<Mural> murals) {
     _murals = murals;
     notifyListeners();
   }
@@ -25,20 +25,9 @@ class MuralProvider with ChangeNotifier {
   }
 
   List<Mural> getGallery() {
-    Map<DateTime, List<Mural>> groupedMurals = {};
-
     List<Mural> murals =
         _murals.where((element) => element.isCaptured).toList();
     murals.sort((a, b) => b.capturedDate.compareTo(a.capturedDate));
-
-    // for (var mural in murals) {
-    //   if (groupedMurals.containsKey(mural.capturedDate)) {
-    //     groupedMurals[mural.capturedDate]!.add(mural);
-    //   } else {
-    //     groupedMurals[mural.capturedDate] = [mural];
-    //   }
-    // }
-
     return murals;
   }
 }

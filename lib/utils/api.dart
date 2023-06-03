@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:muralhunt/utils/mural.dart';
 
 class API {
@@ -26,7 +25,7 @@ class API {
     // }
   }
 
-  static Future<Iterable<Mural>> getMurals() async {
+  static Future<List<Mural>> getMurals() async {
     List<dynamic> data = await fetchData();
     List<Future<Mural>> futureMurals = data.map((record) async {
       Mural mural = Mural(

@@ -35,7 +35,7 @@ class _MapScreenState extends State<MapScreen> {
   void _applyStyle() async {
     final GoogleMapController controller = await _controller.future;
     controller
-        .setMapStyle(await rootBundle.loadString('lib/assets/map_style2.json'));
+        .setMapStyle(await rootBundle.loadString('lib/assets/map_style.json'));
   }
 
   void _centerCamera(LatLng? target) async {
@@ -54,7 +54,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Set<Marker> _setMarkers() {
-    Iterable<Mural> murals = context.watch<MuralProvider>().murals;
+    List<Mural> murals = context.watch<MuralProvider>().murals;
     bool captured = context.watch<FilterProvider>().captured;
     bool notCaptured = context.watch<FilterProvider>().notCaptured;
     BitmapDescriptor capturedIcon = context.watch<MapProvider>().capturedIcon;

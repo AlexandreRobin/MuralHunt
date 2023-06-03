@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:muralhunt/providers/map_provider.dart';
 import 'package:muralhunt/providers/mural_provider.dart';
@@ -24,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Location.determinePosition().then((value) {
-      API.getMurals().then((Iterable<Mural> murals) {
+      API.getMurals().then((List<Mural> murals) {
         context.read<MuralProvider>().setAll(murals);
 
         Navigator.pushReplacement(context,
@@ -51,14 +50,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              'lib/assets/logo_red.svg',
-              width: 200,
-              height: 200,
+            Image.asset(
+              'lib/assets/logo_red.png',
+              width: 150,
+              height: 150,
             ),
             const SizedBox(height: 16),
             const Text(
-              'MuralHunt',
+              'Mural Hunt',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

@@ -38,7 +38,9 @@ class GalleryScreen extends StatelessWidget {
                               .format(murals[index - 1].capturedDate);
 
                   return GalleryItem(
-                      mural: murals[index], displayDate: displayDate);
+                    mural: murals[index],
+                    displayDate: displayDate,
+                  );
                 },
               ),
             ),
