@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mural Hunt',
       theme: ThemeData(
+        primaryColor: Colors.white,
         fontFamily: 'Rubik',
       ),
       home: const SplashScreen(),
