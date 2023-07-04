@@ -26,12 +26,14 @@ class _SplashScreenState extends State<SplashScreen> {
     initializeDateFormatting();
 
     Location.determinePosition().then((value) {
-      API.getMurals().then((List<Mural> murals) {
-        context.read<MuralProvider>().setAll(murals);
+      print('lkj');
+    });
 
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const MapScreen()));
-      });
+    API.getMurals().then((List<Mural> murals) {
+      context.read<MuralProvider>().setAll(murals);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const MapScreen()));
     });
 
     BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(0, 0)),

@@ -23,6 +23,10 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  static const LatLng limitNortheast = LatLng(45.7, -73.5);
+  static const LatLng limitSouthwest = LatLng(45.4, -73.8);
+  static const LatLng intialPosition = LatLng(45.50, -73.57);
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -44,10 +48,19 @@ class _MapScreenState extends State<MapScreen> {
         : const EdgeInsets.only(bottom: 0));
     final GoogleMapController controller = await _controller.future;
     final Position position = await Location.determinePosition();
+    double zoom = 17;
+
+    if (position.latitude <= limitSouthwest.latitude ||
+        position.latitude >= limitNortheast.latitude ||
+        position.longitude <= limitSouthwest.longitude ||
+        position.longitude >= limitNortheast.longitude) {
+      target = target ?? intialPosition;
+      zoom = 14;
+    }
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         target: target ?? LatLng(position.latitude, position.longitude),
-        zoom: 17,
+        zoom: zoom,
       ),
     ));
     context.read<MapProvider>().setPadding(const EdgeInsets.only(bottom: 1000));
@@ -79,15 +92,14 @@ class _MapScreenState extends State<MapScreen> {
         children: <Widget>[
           GoogleMap(
             initialCameraPosition: const CameraPosition(
-              target: LatLng(45.50, -73.56),
+              target: intialPosition,
               zoom: 14,
             ),
             onMapCreated: _onMapCreated,
             compassEnabled: false,
             cameraTargetBounds: CameraTargetBounds(
               LatLngBounds(
-                  northeast: const LatLng(45.7, -73.5),
-                  southwest: const LatLng(45.4, -73.8)),
+                  northeast: limitNortheast, southwest: limitSouthwest),
             ),
             mapToolbarEnabled: false,
             minMaxZoomPreference: const MinMaxZoomPreference(11, null),

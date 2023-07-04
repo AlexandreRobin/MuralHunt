@@ -53,11 +53,15 @@ class ActionButton extends StatelessWidget {
 
   void onCapture(Mural mural) {
     mural.setCapture().then((Mural mural) {
-      context.read<MuralProvider>().updateById(mural);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CapturedScreen(id: mural.id)),
-      );
+      if (mural.isCaptured == false) {
+        Navigator.of(context).pop();
+      } else {
+        context.read<MuralProvider>().updateById(mural);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CapturedScreen(id: mural.id)),
+        );
+      }
     });
   }
 
