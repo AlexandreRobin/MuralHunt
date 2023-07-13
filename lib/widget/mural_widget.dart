@@ -53,7 +53,9 @@ class ActionButton extends StatelessWidget {
 
   void onCapture(Mural mural) {
     mural.setCapture().then((Mural mural) {
-      if (mural.isCaptured == false) {
+      if (mural.isCaptured == false ||
+          mural.capturedDate.toIso8601String().substring(0, 19) !=
+              DateTime.now().toIso8601String().substring(0, 19)) {
         Navigator.of(context).pop();
       } else {
         context.read<MuralProvider>().updateById(mural);

@@ -71,7 +71,7 @@ class DetailsScore extends StatelessWidget {
       borderRadius: BorderRadius.circular(30),
       child: InkWell(
         overlayColor: MaterialStateProperty.all<Color>(
-          const Color(0xFFEE0100).withOpacity(0.1),
+          numberCaptured == 0 ? Colors.transparent : const Color(0xFFEE0100).withOpacity(0.1),
         ),
         onTap: numberCaptured == 0 ? () {} : () => action.call(),
         borderRadius: BorderRadius.circular(30),

@@ -1,7 +1,7 @@
 name: muralhunt
 description: Explore the city by capturing murals
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.3+4
 
 environment:
   sdk: '>=2.19.6 <3.0.0'

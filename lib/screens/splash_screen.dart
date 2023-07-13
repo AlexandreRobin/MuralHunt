@@ -25,9 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     initializeDateFormatting();
 
-    Location.determinePosition().then((value) {
-      print('lkj');
-    });
+    Location.determinePosition();
 
     API.getMurals().then((List<Mural> murals) {
       context.read<MuralProvider>().setAll(murals);

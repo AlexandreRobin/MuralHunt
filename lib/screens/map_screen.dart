@@ -30,9 +30,11 @@ class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
+  bool _myLocationEnabled = false;
+
   Future<void> _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
-    _centerCamera(null);
+    _centerCameraOnLocation();
     _applyStyle();
   }
 
@@ -42,24 +44,39 @@ class _MapScreenState extends State<MapScreen> {
         .setMapStyle(await rootBundle.loadString('lib/assets/map_style.json'));
   }
 
-  void _centerCamera(LatLng? target) async {
-    context.read<MapProvider>().setPadding(target != null
-        ? const EdgeInsets.only(bottom: 150)
-        : const EdgeInsets.only(bottom: 0));
+  void _centerCameraOnTarget(LatLng target) async {
+    context.read<MapProvider>().setPadding(const EdgeInsets.only(bottom: 150));
+    final GoogleMapController controller = await _controller.future;
+    await Future.delayed(const Duration(milliseconds: 50));
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: target,
+        zoom: 17,
+      ),
+    ));
+    context.read<MapProvider>().setPadding(const EdgeInsets.only(bottom: 1000));
+  }
+
+  void _centerCameraOnLocation() async {
+    context.read<MapProvider>().setPadding(const EdgeInsets.only(bottom: 0));
     final GoogleMapController controller = await _controller.future;
     final Position position = await Location.determinePosition();
+    await Future.delayed(const Duration(milliseconds: 50));
     double zoom = 17;
+    LatLng target = LatLng(position.latitude, position.longitude);
+    _myLocationEnabled = true;
 
     if (position.latitude <= limitSouthwest.latitude ||
         position.latitude >= limitNortheast.latitude ||
         position.longitude <= limitSouthwest.longitude ||
         position.longitude >= limitNortheast.longitude) {
-      target = target ?? intialPosition;
+      target = intialPosition;
       zoom = 14;
+      _myLocationEnabled = false;
     }
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
-        target: target ?? LatLng(position.latitude, position.longitude),
+        target: target,
         zoom: zoom,
       ),
     ));
@@ -79,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
             captured && mural.isCaptured || notCaptured && !mural.isCaptured)
         .map((mural) {
       return mural.createMarker(
-          context, capturedIcon, uncapturedIcon, _centerCamera);
+          context, capturedIcon, uncapturedIcon, _centerCameraOnTarget);
     }).toSet();
 
     return markers;
@@ -99,13 +116,15 @@ class _MapScreenState extends State<MapScreen> {
             compassEnabled: false,
             cameraTargetBounds: CameraTargetBounds(
               LatLngBounds(
-                  northeast: limitNortheast, southwest: limitSouthwest),
+                northeast: limitNortheast,
+                southwest: limitSouthwest,
+              ),
             ),
             mapToolbarEnabled: false,
             minMaxZoomPreference: const MinMaxZoomPreference(11, null),
             zoomControlsEnabled: false,
             tiltGesturesEnabled: false,
-            myLocationEnabled: true,
+            myLocationEnabled: _myLocationEnabled,
             myLocationButtonEnabled: false,
             markers: _setMarkers(),
             padding: context.watch<MapProvider>().padding,
@@ -114,16 +133,19 @@ class _MapScreenState extends State<MapScreen> {
           const ScoreWidget()
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: () => _centerCamera(null),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: SvgPicture.asset(
-          'lib/assets/location_red.svg',
-          width: 22,
-          height: 22,
-        ),
-      ),
+      floatingActionButton: _myLocationEnabled
+          ? FloatingActionButton(
+              backgroundColor: Colors.white,
+              onPressed: _centerCameraOnLocation,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: SvgPicture.asset(
+                'lib/assets/location_red.svg',
+                width: 22,
+                height: 22,
+              ),
+            )
+          : Container(),
     );
   }
 }
